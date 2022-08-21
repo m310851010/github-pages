@@ -1,0 +1,92 @@
+// 1. 首先包含 functions (所以你可以操作颜色、SVG、计算等。)
+@import "~bootstrap/scss/functions";
+
+// 2. 默认变量覆盖
+$body-bg: #fff;
+$body-color: #6c7279;
+$primary: #0074d9;
+$danger: #ff4136;
+// 不启用渐变
+$enable-gradients: false;
+$enable-button-pointers: false;
+$enable-rfs: false;
+$enable-validation-icons: false;
+$enable-shadows: false;
+$enable-rounded: false;
+
+
+// 3. 包括所需的Bootstrap样式表的其余部分
+@import "~bootstrap/scss/variables";
+// 4. 默认map覆盖
+
+// 删除主题颜色
+$theme-colors: map-remove($theme-colors, "info", "warning", "success", "danger");
+//$theme-colors: (
+//  "primary": $primary,
+//  "danger": $danger,
+//  "dark": $dark,
+//  "light": $light
+//);
+
+// 5. 包含必须的样式文件
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/root";
+
+// 6. 可选组件
+
+@import "~bootstrap/scss/utilities";
+@import "~bootstrap/scss/root";
+@import "~bootstrap/scss/reboot";
+@import "~bootstrap/scss/type";
+//@import "~bootstrap/scss/images";
+@import "~bootstrap/scss/containers";
+@import "~bootstrap/scss/grid";
+//@import "~bootstrap/scss/tables";
+@import "~bootstrap/scss/forms";
+@import "~bootstrap/scss/buttons";
+@import "~bootstrap/scss/transitions";
+//@import "~bootstrap/scss/dropdown";
+@import "~bootstrap/scss/button-group";
+@import "~bootstrap/scss/nav";
+@import "~bootstrap/scss/navbar";
+@import "~bootstrap/scss/card";
+//@import "~bootstrap/scss/accordion";
+//@import "~bootstrap/scss/breadcrumb";
+//@import "~bootstrap/scss/pagination";
+//@import "~bootstrap/scss/badge";
+//@import "~bootstrap/scss/alert";
+//@import "~bootstrap/scss/progress";
+//@import "~bootstrap/scss/list-group";
+//@import "~bootstrap/scss/close";
+//@import "~bootstrap/scss/toasts";
+//@import "~bootstrap/scss/modal";
+//@import "~bootstrap/scss/tooltip";
+//@import "~bootstrap/scss/popover";
+//@import "~bootstrap/scss/carousel";
+//@import "~bootstrap/scss/spinners";
+//@import "~bootstrap/scss/offcanvas";
+//@import "~bootstrap/scss/placeholders";
+@import "~bootstrap/scss/helpers";
+
+
+// 7. 可选择包括utilities API最后一个
+@import "~bootstrap/scss/utilities/api";
+
+/*
+// 自定义颜色 映射
+$primary: #0074d9;
+$danger: #ff4136;
+
+$theme-colors: (
+  "primary": $primary,
+  "danger": $danger
+);*/
+
+/*
+// 创建一个自定义颜色
+$custom-colors: (
+  "custom-color": #900
+);
+// 合并到map
+$theme-colors: map-merge($theme-colors, $custom-colors);*/

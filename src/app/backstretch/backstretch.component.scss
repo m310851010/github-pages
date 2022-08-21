@@ -1,0 +1,31 @@
+.backstretch {
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -999999;
+  position: fixed;
+
+  img {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    border: none;
+    width: auto;
+    height: auto;
+    max-height: none;
+    max-width: none;
+    z-index: -999999;
+  }
+}
+
+.fadein {
+  opacity: 1;
+}
+
+.fadeout {
+  opacity: 0;
+}

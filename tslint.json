@@ -17,7 +17,7 @@
     "component-class-suffix": false,
     "contextual-lifecycle": true,
     "directive-class-suffix": false,
-    "directive-selector": [true, "attribute", "xxmagic", "camelCase"],
+    "directive-selector": [true, "attribute", "xxmagic", "xxmagic-", "camelCase"],
     "component-selector": [true, "element", "xxmagic", "kebab-case"],
     "import-blacklist": [true, "rxjs/Rx"],
     "interface-name": false,

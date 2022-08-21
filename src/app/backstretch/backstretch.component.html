@@ -1,0 +1,12 @@
+<div class="backstretch" [ngStyle]="wrapStyle">
+  <img
+    *ngFor="let item of list"
+    #oneElement
+    [src]="item.image"
+    [class.fadein]="item.show"
+    [class.fadeout]="!item.show"
+    [ngStyle]="item.imageStyle"
+    [style.transition]="transitionStyle"
+    (load)="onImageLoad(oneElement, item)"
+  />
+</div>

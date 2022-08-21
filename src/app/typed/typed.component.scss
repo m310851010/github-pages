@@ -1,0 +1,29 @@
+.typed-container {
+  text-align: center;
+
+  .text {
+    display: inline-block;
+    vertical-align: middle;
+    color: orange;
+    letter-spacing: 2px;
+  }
+
+  .cursor {
+    display: inline-block;
+    vertical-align: middle;
+    width: 3px;
+    height: 50px;
+    background-color: orange;
+    animation: blink 0.75s step-end infinite;
+  }
+}
+
+@keyframes blink {
+  from,
+  to {
+    background-color: transparent;
+  }
+  50% {
+    background-color: orange;
+  }
+}
