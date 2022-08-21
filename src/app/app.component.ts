@@ -11,6 +11,8 @@ export class AppComponent implements OnInit {
   scrollTop?: boolean;
   expanded = false;
   collapsing = false;
+  collapsed = false;
+  showdown = false;
   ngOnInit(): void {
     fromEvent(window, 'scroll').subscribe(() => {
       this.scrollTop = window.scrollY > 30;
@@ -22,13 +24,35 @@ export class AppComponent implements OnInit {
   }
 
   onToggleClick(navbarCollapse: HTMLDivElement) {
+    if (this.collapsing) {
+      return;
+    }
+
     this.expanded = !this.expanded;
+
     if (this.expanded) {
       this.collapsing = true;
-      const height = navbarCollapse.clientHeight;
-      setTimeout(() => {
-        this.collapsing = false;
-      }, 300);
+      setTimeout(() => (navbarCollapse.style.height = `${navbarCollapse.scrollHeight}px`));
+      setTimeout(() => ((this.collapsing = false), (this.collapsed = true)), 300);
+    } else {
+      this.collapsing = true;
+      this.showdown = true;
+      this.collapsed = false;
+      setTimeout(() => (navbarCollapse.style.height = '0'));
+      setTimeout(() => ((this.collapsing = false), (this.showdown = false), (navbarCollapse.style.height = '')), 500);
     }
+  }
+
+  /**
+   * Trick to restart an element's animation
+   *
+   * @param {HTMLElement} element
+   * @return void
+   *
+   * @see https://www.charistheo.io/blog/2021/02/restart-a-css-animation-with-javascript/#restarting-a-css-animation
+   */
+  reflow(element: HTMLElement) {
+    // tslint:disable-next-line:no-unused-expression
+    element.offsetHeight; // eslint-disable-line no-unused-expressions
   }
 }

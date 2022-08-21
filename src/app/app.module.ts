@@ -9,7 +9,14 @@ import { TypedComponent } from './typed/typed.component';
 import { BannerInfoComponent } from './banner-info/banner-info.component';
 
 @NgModule({
-  declarations: [AppComponent, BackstretchComponent, BackstretchComponent, BirdComponent, TypedComponent, BannerInfoComponent],
+  declarations: [
+    AppComponent,
+    BackstretchComponent,
+    BackstretchComponent,
+    BirdComponent,
+    TypedComponent,
+    BannerInfoComponent
+  ],
   imports: [BrowserModule, AppRoutingModule],
   providers: [],
   bootstrap: [AppComponent]
