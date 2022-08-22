@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'xxmagic-typed',
@@ -6,78 +6,268 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
   styleUrls: ['./typed.component.scss']
 })
 export class TypedComponent implements OnInit {
-  // List of sentences
-  _CONTENT = [
-    'Twinkle, twinkle, little star',
-    'How I wonder what you are',
-    'Up above the world so high',
-    'Like a diamond in the sky'
-  ];
+  /**
+   * 内容类型, 默认html带格式打印
+   */
+  @Input() contentType: 'html' | 'text' = 'html';
+  /**
+   * 打印速速
+   */
+  @Input() typeSpeed = 0;
+  @Input() startDelay = 0;
+  /**
+   * 删除的速速
+   */
+  @Input() backSpeed = 0;
+  @Input() backDelay = 500;
+  @Input() cursorChar = '|';
 
-  // Current sentence being processed
-  _PART = 0;
-
-  // Character number of the current sentence being processed
-  _PART_INDEX = 0;
-
-  // Holds the handle returned from setInterval
-  _INTERVAL_VAL = 0;
-
-  @ViewChild('typedContainer', { static: true }) private typedContainer!: ElementRef<HTMLDivElement>;
-  private _ELEMENT!: HTMLDivElement;
-  private _CURSOR!: HTMLDivElement;
+  @ViewChild('typedText', { static: true }) private _ELEMENTRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('typedCursor', { static: true }) private typedCursor!: ElementRef<HTMLDivElement>;
+  private el!: HTMLDivElement;
+  private cursor!: HTMLDivElement;
 
   constructor() {}
 
+  strings: string[] = [
+    'These are the default values...',
+    'You know what you should do?',
+    'Use your own!',
+    'Have a great day!'
+  ];
+  sequence: number[] = [];
+  @Input() loopCount!: number;
+  @Input() fadeOutDelay = 500;
+  arrayPos = 0;
+  stopNum = 0;
+  strPos = 0;
+  curLoop = 0;
+  stop = false;
+  /**
+   * 用fadeOut动画代替退格
+   */
+  @Input() fadeOut?: boolean;
+  @Input() attr?: string;
+  @Input() isInput?: boolean;
+  @Input() loop?: boolean;
+  fadeOutClass = 'typed-fade-out';
+  onStringTyped = new EventEmitter<number>();
+  callback = new EventEmitter<void>();
+  preStringTyped = new EventEmitter<number>();
+
+  stringsElement?: HTMLElement;
+
   ngOnInit(): void {
-    const element = this.typedContainer.nativeElement;
-    this._ELEMENT = element.querySelector('.text')!;
-    this._CURSOR = element.querySelector('.cursor')!;
-    this._INTERVAL_VAL = setInterval(this.Type.bind(this), 100);
-  }
+    this.el = this._ELEMENTRef.nativeElement;
+    this.cursor = this.typedCursor.nativeElement;
 
-  // Implements typing effect
-  Type() {
-    // Get substring with 1 characater added
-    var text = this._CONTENT[this._PART].substring(0, this._PART_INDEX + 1);
-    this._ELEMENT.innerHTML = text;
-    this._PART_INDEX++;
-
-    // If full sentence has been displayed then start to delete the sentence after some time
-    if (text === this._CONTENT[this._PART]) {
-      // Hide the cursor
-      this._CURSOR.style.display = 'none';
-
-      clearInterval(this._INTERVAL_VAL);
-      setTimeout(() => {
-        this._INTERVAL_VAL = setInterval(this.Delete.bind(this), 50);
-      }, 1000);
+    if (this.stringsElement) {
+      this.strings = [];
+      this.stringsElement.style.display = 'none';
+      const strings = Array.prototype.slice.apply(this.stringsElement.children);
+      strings.forEach(stringElement => this.strings.push(stringElement.innerHTML));
     }
+
+    this.init();
   }
 
-  // Implements deleting effect
-  Delete() {
-    // Get substring with 1 characater deleted
-    const text = this._CONTENT[this._PART].substring(0, this._PART_INDEX - 1);
-    this._ELEMENT.innerHTML = text;
-    this._PART_INDEX--;
+  timeout = 0;
+  typewrite(curString: string, curStrPos: number) {
+    if (this.stop === true) {
+      return;
+    }
 
-    // If sentence has been deleted then start to display the next sentence
-    // tslint:disable-next-line:triple-equals
-    if (text == '') {
-      clearInterval(this._INTERVAL_VAL);
+    if (this.fadeOut && this.el.classList.contains(this.fadeOutClass)) {
+      this.el.classList.remove(this.fadeOutClass);
+      this.cursor.classList.remove(this.fadeOutClass);
+    }
 
-      // If current sentence was last then display the first one, else move to the next
-      if (this._PART === this._CONTENT.length - 1) this._PART = 0;
-      else this._PART++;
+    const humanize = Math.round(Math.random() * (100 - 30)) + this.typeSpeed;
 
-      this._PART_INDEX = 0;
+    // contain typing function in a timeout humanize'd delay
+    this.timeout = setTimeout(() => {
+      // check for an escape character before a pause value
+      // format: \^\d+ .. eg: ^1000 .. should be able to print the ^ too using ^^
+      // single ^ are removed from string
+      let charPause = 0;
+      let substr = curString.substring(curStrPos);
+      if (substr.charAt(0) === '^') {
+        let skip = 1; // skip atleast 1
+        if (/^\^\d+/.test(substr)) {
+          substr = /\d+/.exec(substr)![0];
+          skip += substr.length;
+          charPause = parseInt(substr);
+        }
 
-      // Start to display the next sentence after some time
-      setTimeout(() => {
-        this._CURSOR.style.display = 'inline-block';
-        this._INTERVAL_VAL = setInterval(this.Type.bind(this), 100);
-      }, 200);
+        // strip out the escape character and pause value so they're not printed
+        curString = curString.substring(0, curStrPos) + curString.substring(curStrPos + skip);
+      }
+
+      if (this.contentType === 'html') {
+        // skip over html tags while typing
+        const curChar = curString.substring(curStrPos).charAt(0);
+        if (curChar === '<' || curChar === '&') {
+          let endTag = '';
+          if (curChar === '<') {
+            endTag = '>';
+          } else {
+            endTag = ';';
+          }
+          while (curString.substring(curStrPos + 1).charAt(0) !== endTag) {
+            curStrPos++;
+            if (curStrPos + 1 > curString.length) {
+              break;
+            }
+          }
+          curStrPos++;
+        }
+      }
+
+      // timeout for any pause after a character
+      this.timeout = setTimeout(() => {
+        if (curStrPos === curString.length) {
+          // fires callback function
+          this.onStringTyped.emit(this.arrayPos);
+
+          // is this the final string
+          if (this.arrayPos === this.strings.length - 1) {
+            // animation that occurs on the last typed string
+            this.callback.emit();
+
+            this.curLoop++;
+
+            // quit if we wont loop back
+            if (this.loop === false || this.curLoop === this.loopCount) return;
+          }
+
+          this.timeout = setTimeout(() => {
+            this.backspace(curString, curStrPos);
+          }, this.backDelay);
+        } else {
+          /* call before functions if applicable */
+          if (curStrPos === 0) {
+            this.preStringTyped.emit(this.arrayPos);
+          }
+
+          // start typing each new char into existing string
+          // curString: arg, this.el.html: original text inside element
+          const nextString = curString.substring(0, curStrPos + 1);
+          if (this.attr) {
+            this.el.setAttribute(this.attr, nextString);
+          } else {
+            if (this.isInput) {
+              (this.el as HTMLInputElement).value = nextString;
+            } else if (this.contentType === 'html') {
+              this.el.innerHTML = nextString;
+            } else {
+              this.el.textContent = nextString;
+            }
+          }
+
+          // add characters one by one
+          curStrPos++;
+          // loop the function
+          this.typewrite(curString, curStrPos);
+        }
+        // end of character pause
+      }, charPause);
+
+      // humanized value for typing
+    }, humanize);
+  }
+
+  backspace(curString: string, curStrPos: number) {
+    if (this.stop === true) {
+      return;
+    }
+
+    if (this.fadeOut) {
+      this.initFadeOut();
+      return;
+    }
+
+    // varying values for setTimeout during typing
+    // can't be global since number changes each time loop is executed
+    const humanize = Math.round(Math.random() * (100 - 30)) + this.backSpeed;
+
+    this.timeout = setTimeout(() => {
+      if (this.contentType === 'html') {
+        // skip over html tags while backspacing
+        if (curString.substring(curStrPos).charAt(0) === '>') {
+          // let tag = '';
+          while (curString.substring(curStrPos - 1).charAt(0) !== '<') {
+            // tag -= curString.substring(curStrPos).charAt(0);
+            curStrPos--;
+            if (curStrPos < 0) {
+              break;
+            }
+          }
+          curStrPos--;
+          // tag += '<';
+        }
+      }
+
+      // ----- continue important stuff ----- //
+      // replace text with base text + typed characters
+      this.replaceText(curString.substring(0, curStrPos));
+
+      // if the number (id of character in current string) is
+      // less than the stop number, keep going
+      if (curStrPos > this.stopNum) {
+        // subtract characters one by one
+        curStrPos--;
+        // loop the function
+        this.backspace(curString, curStrPos);
+      }
+      // if the stop number has been reached, increase
+      // array position to next string
+      else if (curStrPos <= this.stopNum) {
+        this.arrayPos++;
+
+        if (this.arrayPos === this.strings.length) {
+          this.arrayPos = 0;
+
+          this.init();
+        } else this.typewrite(this.strings[this.sequence[this.arrayPos]], curStrPos);
+      }
+
+      // humanized value for typing
+    }, humanize);
+  }
+
+  init() {
+    this.timeout = setTimeout(() => {
+      for (let i = 0; i < this.strings.length; i++) {
+        this.sequence[i] = i;
+      }
+
+        this.typewrite(this.strings[this.sequence[this.arrayPos]], this.strPos);
+    }, this.startDelay);
+  }
+
+  // Adds a CSS class to fade out current string
+  initFadeOut() {
+    this.el.classList.add(this.fadeOutClass);
+    this.cursor.classList.add(this.fadeOutClass);
+
+    return setTimeout(() => {
+      this.arrayPos++;
+      if (this.arrayPos === this.strings.length) {
+        this.arrayPos = 0;
+      }
+      this.replaceText('');
+      this.typewrite(this.strings[this.sequence[this.arrayPos]], 0);
+    }, this.fadeOutDelay);
+  }
+
+  // Replaces current text in the HTML element
+  replaceText(str: string) {
+    if (this.isInput) {
+      (this.el as HTMLInputElement).value = str;
+    } else if (this.contentType === 'html') {
+      this.el.innerHTML = str;
+    } else {
+      this.el.textContent = str;
     }
   }
 }

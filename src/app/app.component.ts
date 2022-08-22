@@ -29,7 +29,6 @@ export class AppComponent implements OnInit {
     }
 
     this.expanded = !this.expanded;
-
     if (this.expanded) {
       this.collapsing = true;
       setTimeout(() => (navbarCollapse.style.height = `${navbarCollapse.scrollHeight}px`));
@@ -41,18 +40,5 @@ export class AppComponent implements OnInit {
       setTimeout(() => (navbarCollapse.style.height = '0'));
       setTimeout(() => ((this.collapsing = false), (this.showdown = false), (navbarCollapse.style.height = '')), 500);
     }
-  }
-
-  /**
-   * Trick to restart an element's animation
-   *
-   * @param {HTMLElement} element
-   * @return void
-   *
-   * @see https://www.charistheo.io/blog/2021/02/restart-a-css-animation-with-javascript/#restarting-a-css-animation
-   */
-  reflow(element: HTMLElement) {
-    // tslint:disable-next-line:no-unused-expression
-    element.offsetHeight; // eslint-disable-line no-unused-expressions
   }
 }

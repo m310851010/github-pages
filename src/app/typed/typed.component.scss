@@ -1,29 +1,42 @@
-.typed-container {
-  text-align: center;
+.typed-text {
+  display: inline-block;
+  vertical-align: middle;
+  color: #fff;
+  letter-spacing: 2px;
+}
 
-  .text {
-    display: inline-block;
-    vertical-align: middle;
-    color: orange;
-    letter-spacing: 2px;
+.typed-cursor {
+  opacity: 1;
+  font-weight: 100;
+  animation: blink 0.7s infinite;
+}
+
+@-webkit-keyframes blink {
+  0% {
+    opacity: 1;
   }
-
-  .cursor {
-    display: inline-block;
-    vertical-align: middle;
-    width: 3px;
-    height: 50px;
-    background-color: orange;
-    animation: blink 0.75s step-end infinite;
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
 @keyframes blink {
-  from,
-  to {
-    background-color: transparent;
+  0% {
+    opacity: 1;
   }
   50% {
-    background-color: orange;
+    opacity: 0;
   }
+  100% {
+    opacity: 1;
+  }
+}
+
+.typed-fade-out {
+  opacity: 0;
+  animation: 0;
+  transition: opacity 0.25s;
 }
