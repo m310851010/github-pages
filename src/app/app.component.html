@@ -42,12 +42,30 @@
 
 <main>
   <div class="container">
-    <xxmagic-typed class="typed-container"></xxmagic-typed>
-    <xxmagic-banner-info></xxmagic-banner-info>
+    <div class="row">
+      <xxmagic-typed class="typed-container col-11 col-md-10 col-xl-8" [stringsElement]="typedTextRef"></xxmagic-typed>
+      <div class="hide" #typedTextRef>
+        <div>Hi, Welcome to my page!</div>
+        <div>
+          I am
+          <strong class="strong">"小马同学"</strong>
+          , a
+          <em>fullStack</em>
+          engineer
+        </div>
+        <div>
+          I love
+          <strong class="strong">programming</strong>
+          and enjoy
+          <strong class="strong">sharing</strong>
+        </div>
+      </div>
+      <xxmagic-banner-info class="banner-info-container col-11 col-md-10 col-xl-8"></xxmagic-banner-info>
+    </div>
   </div>
 </main>
 
-<div style="height: 999px"></div>
+<!--<div style="height: 999px"></div>-->
 
 <div class="banner-area-gradient"></div>
 <xxmagic-backstretch [images]="images"></xxmagic-backstretch>

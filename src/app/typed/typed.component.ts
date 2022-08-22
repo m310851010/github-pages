@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'xxmagic-typed',
@@ -6,6 +6,7 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, ViewChild } from '@
   styleUrls: ['./typed.component.scss']
 })
 export class TypedComponent implements OnInit {
+  @Input() strings: string[] = ['xxxxxx', 'fasdfsd'];
   /**
    * 内容类型, 默认html带格式打印
    */
@@ -21,28 +22,9 @@ export class TypedComponent implements OnInit {
   @Input() backSpeed = 0;
   @Input() backDelay = 500;
   @Input() cursorChar = '|';
-
-  @ViewChild('typedText', { static: true }) private _ELEMENTRef!: ElementRef<HTMLDivElement>;
-  @ViewChild('typedCursor', { static: true }) private typedCursor!: ElementRef<HTMLDivElement>;
-  private el!: HTMLDivElement;
-  private cursor!: HTMLDivElement;
-
-  constructor() {}
-
-  strings: string[] = [
-    'These are the default values...',
-    'You know what you should do?',
-    'Use your own!',
-    'Have a great day!'
-  ];
-  sequence: number[] = [];
   @Input() loopCount!: number;
   @Input() fadeOutDelay = 500;
-  arrayPos = 0;
-  stopNum = 0;
-  strPos = 0;
-  curLoop = 0;
-  stop = false;
+
   /**
    * 用fadeOut动画代替退格
    */
@@ -50,36 +32,54 @@ export class TypedComponent implements OnInit {
   @Input() attr?: string;
   @Input() isInput?: boolean;
   @Input() loop?: boolean;
-  fadeOutClass = 'typed-fade-out';
-  onStringTyped = new EventEmitter<number>();
-  callback = new EventEmitter<void>();
-  preStringTyped = new EventEmitter<number>();
+  @Input() fadeOutClass = 'typed-fade-out';
+  @Input() stringsElement?: HTMLElement;
+  @Output() stringTyped = new EventEmitter<number>();
+  @Output() callback = new EventEmitter<void>();
+  @Output() preStringTyped = new EventEmitter<number>();
 
-  stringsElement?: HTMLElement;
+  @ViewChild('typedText', { static: true }) private typedTextRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('typedCursor', { static: true }) private typedCursorRef!: ElementRef<HTMLDivElement>;
+
+  private typedText!: HTMLDivElement;
+  private typedCursor!: HTMLDivElement;
+
+  private timeout = 0;
+  private sequence: number[] = [];
+  private arrayPos = 0;
+  private stopNum = 0;
+  private strPos = 0;
+  private curLoop = 0;
+  private stop = false;
+
+  constructor() {}
 
   ngOnInit(): void {
-    this.el = this._ELEMENTRef.nativeElement;
-    this.cursor = this.typedCursor.nativeElement;
+    this.typedText = this.typedTextRef.nativeElement;
+    this.typedCursor = this.typedCursorRef.nativeElement;
 
     if (this.stringsElement) {
       this.strings = [];
       this.stringsElement.style.display = 'none';
-      const strings = Array.prototype.slice.apply(this.stringsElement.children);
-      strings.forEach(stringElement => this.strings.push(stringElement.innerHTML));
+
+      const children = this.stringsElement.children;
+      const length = children.length;
+      for (let i = 0; i < length; i++) {
+        this.strings.push(children[i].innerHTML);
+      }
     }
 
     this.init();
   }
 
-  timeout = 0;
   typewrite(curString: string, curStrPos: number) {
     if (this.stop === true) {
       return;
     }
 
-    if (this.fadeOut && this.el.classList.contains(this.fadeOutClass)) {
-      this.el.classList.remove(this.fadeOutClass);
-      this.cursor.classList.remove(this.fadeOutClass);
+    if (this.fadeOut && this.typedText.classList.contains(this.fadeOutClass)) {
+      this.typedText.classList.remove(this.fadeOutClass);
+      this.typedCursor.classList.remove(this.fadeOutClass);
     }
 
     const humanize = Math.round(Math.random() * (100 - 30)) + this.typeSpeed;
@@ -96,7 +96,7 @@ export class TypedComponent implements OnInit {
         if (/^\^\d+/.test(substr)) {
           substr = /\d+/.exec(substr)![0];
           skip += substr.length;
-          charPause = parseInt(substr);
+          charPause = parseInt(substr, 10);
         }
 
         // strip out the escape character and pause value so they're not printed
@@ -127,7 +127,7 @@ export class TypedComponent implements OnInit {
       this.timeout = setTimeout(() => {
         if (curStrPos === curString.length) {
           // fires callback function
-          this.onStringTyped.emit(this.arrayPos);
+          this.stringTyped.emit(this.arrayPos);
 
           // is this the final string
           if (this.arrayPos === this.strings.length - 1) {
@@ -153,14 +153,14 @@ export class TypedComponent implements OnInit {
           // curString: arg, this.el.html: original text inside element
           const nextString = curString.substring(0, curStrPos + 1);
           if (this.attr) {
-            this.el.setAttribute(this.attr, nextString);
+            this.typedText.setAttribute(this.attr, nextString);
           } else {
             if (this.isInput) {
-              (this.el as HTMLInputElement).value = nextString;
+              (this.typedText as HTMLInputElement).value = nextString;
             } else if (this.contentType === 'html') {
-              this.el.innerHTML = nextString;
+              this.typedText.innerHTML = nextString;
             } else {
-              this.el.textContent = nextString;
+              this.typedText.textContent = nextString;
             }
           }
 
@@ -241,14 +241,14 @@ export class TypedComponent implements OnInit {
         this.sequence[i] = i;
       }
 
-        this.typewrite(this.strings[this.sequence[this.arrayPos]], this.strPos);
+      this.typewrite(this.strings[this.sequence[this.arrayPos]], this.strPos);
     }, this.startDelay);
   }
 
   // Adds a CSS class to fade out current string
   initFadeOut() {
-    this.el.classList.add(this.fadeOutClass);
-    this.cursor.classList.add(this.fadeOutClass);
+    this.typedText.classList.add(this.fadeOutClass);
+    this.typedCursor.classList.add(this.fadeOutClass);
 
     return setTimeout(() => {
       this.arrayPos++;
@@ -263,11 +263,19 @@ export class TypedComponent implements OnInit {
   // Replaces current text in the HTML element
   replaceText(str: string) {
     if (this.isInput) {
-      (this.el as HTMLInputElement).value = str;
+      (this.typedText as HTMLInputElement).value = str;
     } else if (this.contentType === 'html') {
-      this.el.innerHTML = str;
+      this.typedText.innerHTML = str;
     } else {
-      this.el.textContent = str;
+      this.typedText.textContent = str;
     }
+  }
+
+  reset() {
+    clearInterval(this.timeout);
+    this.typedText.textContent = '';
+    this.strPos = 0;
+    this.arrayPos = 0;
+    this.curLoop = 0;
   }
 }

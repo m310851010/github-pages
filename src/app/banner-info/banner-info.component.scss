@@ -1,0 +1,122 @@
+$border-color: #ffde3a;
+
+.banner-info {
+  padding: 5em 2em;
+  text-align: center;
+  position: relative;
+  border: 2px solid #ffffff50;
+
+  h3 {
+    font-size: 5em;
+    font-weight: 400;
+    color: #ffde3a;
+    margin: 0;
+    font-family: 'Marck Script', cursive;
+    letter-spacing: 1px;
+  }
+
+  p {
+    color: #fff;
+    font-size: 3.3em;
+    font-weight: bold;
+  }
+
+  span {
+    color: #c7c7c7;
+    letter-spacing: 4px;
+    font-size: 0.9em;
+  }
+}
+
+.border-effects {
+  overflow: hidden;
+  position: relative;
+
+  i {
+    position: absolute;
+    display: block;
+  }
+
+  i:nth-child(1) {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, $border-color);
+    animation: animate1 1s linear infinite;
+  }
+
+  i:nth-child(2) {
+    top: -100%;
+    right: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg, transparent, $border-color);
+    animation: animate2 1s linear infinite;
+    animation-delay: 0.25s;
+  }
+
+  i:nth-child(3) {
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(270deg, transparent, $border-color);
+    animation: animate3 1s linear infinite;
+    animation-delay: 0.5s;
+  }
+
+  i:nth-child(4) {
+    bottom: -100%;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(360deg, transparent, $border-color);
+    animation: animate4 1s linear infinite;
+    animation-delay: 0.75s;
+  }
+}
+
+@keyframes animate1 {
+  0% {
+    left: -100%;
+  }
+
+  50%,
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes animate2 {
+  0% {
+    top: -100%;
+  }
+
+  50%,
+  100% {
+    top: 100%;
+  }
+}
+
+@keyframes animate3 {
+  0% {
+    right: -100%;
+  }
+
+  50%,
+  100% {
+    right: 100%;
+  }
+}
+
+@keyframes animate4 {
+  0% {
+    bottom: -100%;
+  }
+
+  50%,
+  100% {
+    bottom: 100%;
+  }
+}
