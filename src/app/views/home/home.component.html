@@ -1,0 +1,26 @@
+<div class="container">
+  <div class="profile-thumb">
+    <img [src]="'./assets/images/profile.jpg'" />
+  </div>
+
+  <div class="row">
+    <xxmagic-typed class="typed-container col-11 col-md-10 col-xl-8" [stringsElement]="typedTextRef"></xxmagic-typed>
+    <div class="hide" #typedTextRef>
+      <div>Hi, Welcome to my page!</div>
+      <div>
+        I am
+        <strong class="strong">"小马同学"</strong>
+        , a
+        <em>fullStack</em>
+        engineer
+      </div>
+      <div>
+        I love
+        <strong class="strong">programming</strong>
+        and enjoy
+        <strong class="strong">sharing</strong>
+      </div>
+    </div>
+    <xxmagic-banner-info class="banner-info-container col-11 col-md-10 col-xl-8"></xxmagic-banner-info>
+  </div>
+</div>

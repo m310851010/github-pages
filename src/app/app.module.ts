@@ -1,25 +1,15 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BackstretchComponent } from './backstretch/backstretch.component';
 import { BirdComponent } from './bird/bird.component';
-import { TypedComponent } from './typed/typed.component';
-import { BannerInfoComponent } from './banner-info/banner-info.component';
 import { NavComponent } from './nav/nav.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    BackstretchComponent,
-    BackstretchComponent,
-    BirdComponent,
-    TypedComponent,
-    BannerInfoComponent,
-    NavComponent
-  ],
-  imports: [BrowserModule, AppRoutingModule],
+  declarations: [AppComponent, BackstretchComponent, BirdComponent, NavComponent],
+  imports: [BrowserModule, BrowserAnimationsModule, AppRoutingModule],
   providers: [],
   bootstrap: [AppComponent]
 })
