@@ -7,6 +7,7 @@ import { BackstretchComponent } from './backstretch/backstretch.component';
 import { BirdComponent } from './bird/bird.component';
 import { TypedComponent } from './typed/typed.component';
 import { BannerInfoComponent } from './banner-info/banner-info.component';
+import { NavComponent } from './nav/nav.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { BannerInfoComponent } from './banner-info/banner-info.component';
     BackstretchComponent,
     BirdComponent,
     TypedComponent,
-    BannerInfoComponent
+    BannerInfoComponent,
+    NavComponent
   ],
   imports: [BrowserModule, AppRoutingModule],
   providers: [],

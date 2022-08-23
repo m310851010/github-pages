@@ -1,4 +1,38 @@
 $border-color: #ffde3a;
+$out-border-color: #ffc107;
+
+:host(.banner-info-container) {
+  padding: 0;
+  margin: 70px auto 0;
+  position: relative;
+  overflow: hidden;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    transition: 0.3s ease-in-out;
+  }
+  &::before {
+    top: -6px;
+    left: -6px;
+    border-top: 2px solid $out-border-color;
+    border-left: 2px solid $out-border-color;
+  }
+  &::after {
+    right: -6px;
+    bottom: -6px;
+    border-bottom: 2px solid $out-border-color;
+    border-right: 2px solid $out-border-color;
+  }
+  &:hover::before,
+  &:hover::after {
+    width: calc(50% + 9px);
+    height: calc(50% + 9px);
+  }
+}
 
 .banner-info {
   padding: 5em 2em;

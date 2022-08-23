@@ -1,0 +1,33 @@
+<nav
+  class="navbar main-navigation navbar-expand-sm navbar-dark"
+  [class.bg-dark]="scrollTop"
+  [class.fixed-top]="scrollTop"
+  [class.minified]="scrollTop"
+>
+  <div class="container">
+    <a class="navbar-brand" href="#"><img width="40" [src]="'./assets/images/logo.png'" alt="小马同学" /></a>
+    <button class="navbar-toggler" [class.collapsed]="!expanded" type="button" (click)="onToggleClick(navbarCollapse)">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div
+      #navbarCollapse
+      class="navbar-collapse"
+      [class.collapse]="!expanded || collapsed"
+      [class.show]="collapsed || showdown"
+      [class.collapsing]="collapsing"
+    >
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Portfolio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
