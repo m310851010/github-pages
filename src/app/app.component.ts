@@ -9,7 +9,7 @@ import { animationRoute } from './router.animations';
   animations: [animationRoute]
 })
 export class AppComponent implements OnInit {
-  readonly images = ['1', '2', '3'].map(v => this.getImage(v));
+  readonly images = ['4', '1', '2', '3'].map(v => this.getImage(v));
 
   routerState = true;
   routerStateCode = 'active';
