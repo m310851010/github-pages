@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { fromEvent } from 'rxjs';
+import { delay, fromEvent, tap, timer } from 'rxjs';
 
 @Component({
   selector: 'xxmagic-nav',
@@ -30,9 +30,7 @@ export class NavComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    fromEvent(window, 'scroll').subscribe(() => {
-      this.scrollTop = window.scrollY > 40;
-    });
+    fromEvent(window, 'scroll').subscribe(() => (this.scrollTop = window.scrollY > 40));
   }
 
   /**
@@ -47,14 +45,29 @@ export class NavComponent implements OnInit {
     this.expanded = !this.expanded;
     if (this.expanded) {
       this.collapsing = true;
-      setTimeout(() => (navbarCollapse.style.height = `${navbarCollapse.scrollHeight}px`));
-      setTimeout(() => ((this.collapsing = false), (this.collapsed = true)), 300);
+      timer(0)
+        .pipe(
+          tap(() => (navbarCollapse.style.height = `${navbarCollapse.scrollHeight}px`)),
+          delay(300)
+        )
+        .subscribe(() => {
+          this.collapsing = false;
+          this.collapsed = true;
+        });
     } else {
       this.collapsing = true;
       this.showdown = true;
       this.collapsed = false;
-      setTimeout(() => (navbarCollapse.style.height = '0'));
-      setTimeout(() => ((this.collapsing = false), (this.showdown = false), (navbarCollapse.style.height = '')), 500);
+      timer(0)
+        .pipe(
+          tap(() => (navbarCollapse.style.height = '0')),
+          delay(500)
+        )
+        .subscribe(() => {
+          this.collapsing = false;
+          this.showdown = false;
+          navbarCollapse.style.height = '';
+        });
     }
   }
 }

@@ -117,11 +117,11 @@ export class BackstretchComponent implements OnInit, OnDestroy {
     info.show = true;
     this.resize(info);
 
-    setTimeout(() => {
-      if (this.list.length > 1) {
+    timer(this.fadeIfy)
+      .pipe(filter(() => this.list.length > 1))
+      .subscribe(() => {
         this.list.shift();
-      }
-    }, this.fadeIfy);
+      });
   }
 
   ngOnDestroy(): void {
